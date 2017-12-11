@@ -1,0 +1,22 @@
+{
+    "name": "sample/composer-php",
+    "description": "A sample pack",
+    "authors": [
+        {
+            "name": "hudson",
+            "email": "jhudsonsg@gmail.com"
+        }
+    ],
+    "require": {
+    	"php": ">= 5.4"
+
+    },
+    "autoload":{
+        "psr-4": {
+            "Router\\": "router/",
+            "App\\": "app/"
+        }
+
+    }
+
+}
