@@ -10,8 +10,8 @@ class Pedido
 	public function __construct()
 	{
 
-		$this->name = "My name";
-		$this->value = 0;
+		$this->name = "Hello";
+		$this->value = "no value...";
 	}
 
 	public function __toString()

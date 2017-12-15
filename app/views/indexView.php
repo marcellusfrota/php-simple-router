@@ -17,5 +17,7 @@
 			<p><?php echo $pedido; ?></p>
 			<a href="">Back</a>
 		<?php endif; ?>
+
+		<a href="myfoo/mybar">request</a>
 	</body>
 </html>

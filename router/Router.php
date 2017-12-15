@@ -1,16 +1,20 @@
 <?php 
 namespace Router;
 
-class Router
+use Router\Route;
+use Router\RouterInterface;
+
+class Router implements RouterInterface
 {
 
-	private $routes;
+	protected $routes;
+	protected $url;
+	protected $path;
+
 	private $debug;
-	private $url;
-	private $path;
 
 	/**
-	 * Registra a url requisitada na página e o seu metodo.
+	 * Registra a url requisitada na página e o seu método.
 	 * 
 	 */
 	public function __construct()
@@ -27,48 +31,44 @@ class Router
 		$this->url['request_method'] = $_SERVER['REQUEST_METHOD'];
 
 		$this->routes = array();
+
+		/**
+		 * Para visualizar todas as suas rotas cadastradas e a requisição da tora mãe
+		 * basta alterar o debug para 'true'
+		 * 
+		 */
 		$this->debug = false;
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do metodo post.
+	 * Cadastra uma rota do que pode ser acessada atravez do método post.
 	 * 
 	 */
 	public function post($url, $args)
 	{
 
 		$args = explode("@", $args);
+		$uri = explode("/", $url);
+		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_POST);
 
-		$this->routes[$url] = array(
-			'controller' => $args[0], 
-			'method' => $args[1], 
-			'request_url' => explode("/", $url),
-
-			'request_method' => 'POST'
-		);
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do metodo get.
+	 * Cadastra uma rota do que pode ser acessada atravez do método get.
 	 * 
 	 */
 	public function get($url, $args)
 	{
 
 		$args = explode("@", $args);
+		$uri = explode("/", $url);
+		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_GET);
 
-		$this->routes[$url] = array(
-			'controller' => $args[0], 
-			'method' => $args[1], 
-			'request_url' => explode("/", $url),
-
-			'request_method' => 'GET'
-		);
 	}
 
 	/**
-	 * O metodo __destruct é execultado para verificar se a url requisita está registrada nas 
-	 * rotas e assim realizar a execulção do metodo da classe solicitada.
+	 * O método __destruct é execultado para verificar se a url requisita está registrada nas 
+	 * rotas e assim realizar a execulção do método da classe solicitada.
 	 * 
 	 */
 	public function __destruct()
@@ -78,25 +78,25 @@ class Router
 		 * Percorre todas as rotas cadastradas no arquivo routes.php
 		 * 
 		 */		
-		foreach ($this->routes as $route => &$attributes) {
+		foreach ($this->routes as &$route) {
 
 			/**
-			 * Verifica se o metodo da rota é igual ao método de acesso a página.
+			 * Verifica se o método da rota é igual ao método de acesso a página.
 			 * 
 			 */
-			if($attributes['request_method'] == $this->url['request_method']){		
+			if($route->getRequestMethod() == $this->url['request_method']){		
 			
 				/**
 				 * Verifica se o tamanho do array da url é igual ao da página.
 				 * 
 				 */
-				if(count($this->url['request_url']) == count($attributes['request_url'])){
+				if(count($this->url['request_url']) == count($route->getRequestUrl())){
 											
 					/**
 					 * Percorre a url cadastrar.
 					 * 
 					 */
-					for($i = 0;$i < count($attributes['request_url']); $i++){ 
+					for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
 
 
 						/**
@@ -104,16 +104,16 @@ class Router
 						 * iguais.
 						 * 
 						 */
-						if($attributes['request_url'][$i] == $this->url['request_url'][$i]){
+						if($route->getRequestUrl()[$i] == $this->url['request_url'][$i]){
 
 							/**
 							 * Verifica se está no fim do loop que percore as urls
 							 * 
 							 */
-							if($i == count($attributes['request_url'])-1){	
+							if($i == count($route->getRequestUrl())-1){	
 
-								$class = "App\\controllers\\{$attributes['controller']}";				
-								call_user_func([new $class(), $attributes['method']], @$attributes['params']);		
+								$class = "App\\controllers\\{$route->getController()}";				
+								call_user_func([new $class(), $route->getMethod()], @$route->getParam());		
 							}
 						}else{
 
@@ -121,18 +121,18 @@ class Router
 							 * Verifica se a posição do array cadastrado é para receber um parametro
 							 * 
 							 */
-							if(strstr($attributes['request_url'][$i], '{')){
-								$nameParameter = str_replace(["{", "}"], '', $attributes['request_url'][$i]);
-								$attributes['params'][$nameParameter] = $this->url['request_url'][$i];
+							if(strstr($route->getRequestUrl()[$i], '{')){
+								$nameParameter = str_replace(["{", "}"], '', $route->getRequestUrl()[$i]);
+								$route->setParam($nameParameter, $this->url['request_url'][$i]);
 
 								/**
 								 * Verifica se está no fim do loop que percore as urls
 								 * 
 								 */
-								if($i == count($attributes['request_url'])-1){
+								if($i == count($route->getRequestUrl())-1){
 
-									$class = "App\\controllers\\{$attributes['controller']}";				
-									call_user_func([new $class(), $attributes['method']], @$attributes['params']);
+									$class = "App\\controllers\\{$route->getController()}";				
+									call_user_func([new $class(), $route->getMethod()], @$route->getParam());	
 								}
 
 							/**
@@ -146,7 +146,7 @@ class Router
 								 * Limpa os parametros adicionados na rota.
 								 * 
 								 */
-								unset($attributes['params']);
+								$route->unsetParm();
 
 								/**
 								 * Para a verificação de toda a url.
@@ -161,17 +161,25 @@ class Router
 		}
 
 		/**
-		 * Cado sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
-		 * metodo construtor da classe.
+		 * Cao sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
+		 * método construtor da classe.
 		 * 
 		 */
 		if($this->debug)
 		{
 
 			echo "<pre>";
-			print_r($this->url);
 			echo "<br><hr></br>";
-			print_r($this->routes);
+
+			print_r($this->url);
+
+			echo "<br><hr></br>";
+
+			print_r($this->routes);	
+
+			echo "<br><hr></br>";
+
+			print_r($_SERVER);
 			echo "</pre>";
 		}
 	}
