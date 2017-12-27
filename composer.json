@@ -1,6 +1,6 @@
 {
-    "name": "sample/composer-php",
-    "description": "A sample pack",
+    "name": "php-project-router/composer-php",
+    "description": "php-project-router, sample pack",
     "authors": [
         {
             "name": "hudson",
