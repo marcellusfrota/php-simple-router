@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<title>View</title>
-		<base href="/project-router/">
+		<base href="/php-project-router/">
 		<meta charset="utf-8">
 	</head>
 	<body>
