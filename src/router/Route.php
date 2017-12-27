@@ -70,7 +70,7 @@ class Route
         $this->param[$nameParameter] = $param;
     }
 
-    public function unsetParm()
+    public function unsetParms()
     {
       $this->param = null;
   }
