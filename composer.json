@@ -17,6 +17,8 @@
             "App\\": "src/mvc/"
         }
 
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^6"
     }
-
 }

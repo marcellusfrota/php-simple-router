@@ -9,9 +9,7 @@ class Router implements RouterInterface
 
 	protected $routes;
 	protected $url;
-	protected $path;
-
-	private $debug;
+	protected $debug;
 
 	/**
 	 * Registra a url requisitada na página e o seu método.
@@ -22,15 +20,18 @@ class Router implements RouterInterface
 	public function __construct($debugValue = false)
 	{
 
-		$this->path = "/";
+		$path = "/";
+		$this->url['request_method'] = self::METHOD_GET;
 
-		if(isset($_SERVER['PATH_INFO']))
-		{
-			$this->path = $_SERVER['PATH_INFO'];
+		if(isset($_SERVER['PATH_INFO'])){
+			$path = $_SERVER['PATH_INFO'];		
+		}
+
+		if(isset($_SERVER['REQUEST_METHOD'])){
+			$this->url['request_method'] = $_SERVER['REQUEST_METHOD'];		
 		}
 		
-		$this->url['request_url'] = explode("/", parse_url($this->path, PHP_URL_PATH));
-		$this->url['request_method'] = $_SERVER['REQUEST_METHOD'];
+		$this->url['request_url'] = explode("/", parse_url($path, PHP_URL_PATH));
 
 		$this->routes = array();
 
@@ -48,11 +49,9 @@ class Router implements RouterInterface
 	 */
 	public function post($url, $args)
 	{
-
 		$args = explode("@", $args);
 		$uri = explode("/", $url);
 		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_POST);
-
 	}
 
 	/**
@@ -61,16 +60,16 @@ class Router implements RouterInterface
 	 */
 	public function get($url, $args)
 	{
-
 		$args = explode("@", $args);
 		$uri = explode("/", $url);
 		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_GET);
-
 	}
 
     /**
 	 * Cao sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
 	 * método construtor da classe.
+	 * 
+	 * @return void
 	 * 
 	 */
     private function debug()
@@ -92,39 +91,64 @@ class Router implements RouterInterface
 
     /**
 	 * Verifica se o método da rota é igual ao método de acesso a página.
+	 * 
 	 * @return boolean
 	 * 
 	 */
-    private function checkMethod($routeCreated, $routeRequested)
-    {
-
-    	if($routeCreated->getRequestMethod() == $routeRequested['request_method'])
-    	{
-    		return true;
+    public function checkMethods($routeCreated, $routeRequested)
+    {	
+    	if($this->validMethod($routeCreated) && $this->validMethod($routeRequested)){
+    		if($routeCreated->getRequestMethod() == $routeRequested['request_method']){
+	    		return true;
+	    	}
     	}
 
     	return false;
     }
+
 
     /**
      * Verifica se o tamanho do array da url é igual ao da página.
+     * 
      * @return boolean
      * 
      */
-    private function checkQuantity($routeCreated, $routeRequested)
-    {
-
-    	if(count($routeCreated->getRequestUrl()) == count($routeRequested['request_url']))
-    	{
+    public function checkQuantity($routeCreated, $routeRequested)
+    {	
+    	if(count($routeCreated->getRequestUrl()) == count($routeRequested['request_url'])){
     		return true;
     	}
 
     	return false;
     }
 
-    private function analyzeRoute($route)
-    {
 
+    public function validMethod($route)
+    {
+    	if (is_array($route)) {
+    		if($route['request_method'] == self::METHOD_GET 
+    			|| $route['request_method'] == self::METHOD_POST){
+    			return true;
+    		}
+
+    		return false;
+    	}
+
+    	if($route->getRequestMethod() == self::METHOD_GET 
+    		|| $route->getRequestMethod() == self::METHOD_POST){
+    		return true;
+    	}
+
+    	return false;
+    }
+
+
+	/**
+	 * Percorre o array que contem cada 'membro' da rota e os compara com a rota requisitada.
+	 * 
+	 */
+    public function analyzeRoute($route)
+    {	
     	for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
 
 			/**
@@ -139,12 +163,10 @@ class Router implements RouterInterface
 				 * 
 				 */
 				if($i == count($route->getRequestUrl())-1){	
-
 					$class = "App\\controllers\\{$route->getController()}";				
 					call_user_func([new $class(), $route->getMethod()], @$route->getParam());	
 
 					if($this->debug){
-
 						$this->debug();	
 					}
 				}
@@ -155,7 +177,6 @@ class Router implements RouterInterface
 				 * 
 				 */
 				if(strstr($route->getRequestUrl()[$i], '{')){
-
 					$nameParameter = str_replace(["{", "}"], '', $route->getRequestUrl()[$i]);
 					$route->setParam($nameParameter, $this->url['request_url'][$i]);
 
@@ -164,15 +185,12 @@ class Router implements RouterInterface
 					 * 
 					 */
 					if($i == count($route->getRequestUrl())-1){
-
 						$class = "App\\controllers\\{$route->getController()}";				
 						call_user_func([new $class(), $route->getMethod()], @$route->getParam());
 
-
 						if($this->debug){
-
 							$this->debug();	
-						}	
+						}							
 					}
 
 				/**
@@ -180,7 +198,7 @@ class Router implements RouterInterface
 				 * divergentes e não seja prepara para receber um parâmetro
 				 * 
 				 */
-			}else{
+				}else{
 
 					/**
 					 * Limpa os parametros adicionados na rota.
@@ -196,32 +214,7 @@ class Router implements RouterInterface
 				}								 							
 			}
 		}
-	}
 
-	/**
-	 * Método que execulta a bateria de funções que verifica a rota,
-	 * Criado também para os testes
-	 * 
-	 */
-	private function run()
-	{
-
-		/**
-		 * Percorre todas as rotas cadastradas no arquivo routes.php
-		 * 
-		 */		
-		foreach ($this->routes as &$route) {
-
-			if($this->checkMethod($route, $this->url) && $this->checkQuantity($route, $this->url)){	
-
-				/**
-				 * Percorre a url cadastrar.
-				 * 
-				 */
-				$this->analyzeRoute($route);					
-				
-			}							
-		}
 	}
 
 	/**
@@ -231,7 +224,15 @@ class Router implements RouterInterface
 	 */
 	public function __destruct()
 	{
+		/**
+		 * Percorre todas as rotas cadastradas no arquivo routes.php
+		 * 
+		 */		
+		foreach ($this->routes as &$route) {
+			if($this->checkMethods($route, $this->url) && $this->checkQuantity($route, $this->url)){	
 
-		$this->run();
+				$this->analyzeRoute($route);					
+			}							
+		}
 	}
 }
