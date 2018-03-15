@@ -66,30 +66,6 @@ class Router implements RouterInterface
 	}
 
     /**
-	 * Cao sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
-	 * método construtor da classe.
-	 * 
-	 * @return void
-	 * 
-	 */
-    private function debug()
-    {
-
-    	echo "<pre>";
-
-    	echo "<br><hr></br>";
-    	print_r($this->url);
-
-    	echo "<br><hr></br>";
-    	print_r($this->routes);	
-
-    	echo "<br><hr></br>";
-    	print_r($_SERVER);
-
-    	echo "</pre>";
-    }
-
-    /**
 	 * Verifica se o método da rota é igual ao método de acesso a página.
 	 * 
 	 * @return boolean
@@ -216,7 +192,31 @@ class Router implements RouterInterface
 		}
 
 	}
+	
+	/**
+	 * Cao sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
+	 * método construtor da classe.
+	 * 
+	 * @return void
+	 * 
+	 */
+    private function debug()
+    {
 
+    	echo "<pre>";
+
+    	echo "<br><hr></br>";
+    	print_r($this->url);
+
+    	echo "<br><hr></br>";
+    	print_r($this->routes);	
+
+    	echo "<br><hr></br>";
+    	print_r($_SERVER);
+
+    	echo "</pre>";
+	}
+	
 	/**
 	 * O método __destruct é execultado para verificar se a url requisita está registrada nas 
 	 * rotas e assim realizar a execulção do método da classe solicitada.
