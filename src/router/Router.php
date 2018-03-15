@@ -60,61 +60,61 @@ class Router implements RouterInterface
 	 * Verifica se o método da rota é igual ao método de acesso a página.
 	 * @return boolean
 	 */
-    public function checkMethods($routeCreated, $routeRequested)
-    {	
-    	if($this->validMethod($routeCreated) && $this->validMethod($routeRequested)){
-    		if($routeCreated->getRequestMethod() == $routeRequested['request_method']){
-	    		return true;
-	    	}
-    	}
+	public function checkMethods($routeCreated, $routeRequested)
+	{	
+		if($this->validMethod($routeCreated) && $this->validMethod($routeRequested)){
+			if($routeCreated->getRequestMethod() == $routeRequested['request_method']){
+				return true;
+			}
+		}
 
-    	return false;
-    }
+		return false;
+	}
 
-    /**
-     * Verifica se o tamanho do array da url é igual ao da página.
-     * @return boolean
-     */
-    public function checkQuantity($routeCreated, $routeRequested)
-    {	
-    	if(count($routeCreated->getRequestUrl()) == count($routeRequested['request_url'])){
-    		return true;
-    	}
+	/**
+	* Verifica se o tamanho do array da url é igual ao da página.
+	* @return boolean
+	*/
+	public function checkQuantity($routeCreated, $routeRequested)
+	{	
+		if(count($routeCreated->getRequestUrl()) == count($routeRequested['request_url'])){
+			return true;
+		}
 
-    	return false;
-    }
+		return false;
+	}
 
 	/**
 	 * Verifica os métodos das rotas
 	 * @return boolean
 	 */
-    public function validMethod($route)
-    {
-    	if (is_array($route)) {
-    		if($route['request_method'] == self::METHOD_GET 
-    			|| $route['request_method'] == self::METHOD_POST){
-    			return true;
-    		}
+	public function validMethod($route)
+	{
+		if (is_array($route)) {
+			if($route['request_method'] == self::METHOD_GET 
+				|| $route['request_method'] == self::METHOD_POST){
+			return true;
+		}
 
-    		return false;
-    	}
+			return false;
+		}
 
-    	if($route->getRequestMethod() == self::METHOD_GET 
-    		|| $route->getRequestMethod() == self::METHOD_POST){
-    		return true;
-    	}
+		if($route->getRequestMethod() == self::METHOD_GET 
+			|| $route->getRequestMethod() == self::METHOD_POST){
+			return true;
+		}
 
-    	return false;
-    }
+		return false;
+	}
 
 
 	/**
 	 * Percorre o array que contem cada 'membro' da rota e os compara com a rota requisitada.
 	 * @return void
 	 */
-    public function analyzeRoute($route)
-    {	
-    	for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
+	public function analyzeRoute($route)
+	{	
+		for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
 			if($route->getRequestUrl()[$i] == $this->url['request_url'][$i]){
 				if($i == count($route->getRequestUrl())-1){	
 					$class = "App\\controllers\\{$route->getController()}";				
@@ -152,16 +152,16 @@ class Router implements RouterInterface
 	 * método construtor da classe.
 	 * @return void
 	 */
-    private function debug()
-    {
-    	echo "<pre>";
-    	echo "<br><hr></br>";
-    	print_r($this->url);
-    	echo "<br><hr></br>";
-    	print_r($this->routes);	
-    	echo "<br><hr></br>";
-    	print_r($_SERVER);
-    	echo "</pre>";
+	private function debug()
+	{
+		echo "<pre>";
+		echo "<br><hr></br>";
+		print_r($this->url);
+		echo "<br><hr></br>";
+		print_r($this->routes);	
+		echo "<br><hr></br>";
+		print_r($_SERVER);
+		echo "</pre>";
 	}
 	
 	/**
