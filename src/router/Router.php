@@ -12,14 +12,11 @@ class Router implements RouterInterface
 	protected $debug;
 
 	/**
-	 * Registra a url requisitada na página e o seu método.
-	 * @param $debugValue - Pode ser definido na hora de instanciar o objeto no arquivo
-	 * routes.php
-	 * 
+	 * Registra a url requisitada na página.
+	 * @param $debugValue
 	 */
 	public function __construct($debugValue = false)
 	{
-
 		$path = "/";
 		$this->url['request_method'] = self::METHOD_GET;
 
@@ -34,18 +31,12 @@ class Router implements RouterInterface
 		$this->url['request_url'] = explode("/", parse_url($path, PHP_URL_PATH));
 
 		$this->routes = array();
-
-		/**
-		 * Para visualizar todas as suas rotas cadastradas e a requisição da tora mãe
-		 * basta alterar o debug para 'true'
-		 * 
-		 */
 		$this->debug = $debugValue;
 	}
 
 	/**
 	 * Cadastra uma rota do que pode ser acessada atravez do método post.
-	 * 
+	 * @return void
 	 */
 	public function post($url, $args)
 	{
@@ -56,7 +47,7 @@ class Router implements RouterInterface
 
 	/**
 	 * Cadastra uma rota do que pode ser acessada atravez do método get.
-	 * 
+	 * @return void
 	 */
 	public function get($url, $args)
 	{
@@ -67,9 +58,7 @@ class Router implements RouterInterface
 
     /**
 	 * Verifica se o método da rota é igual ao método de acesso a página.
-	 * 
 	 * @return boolean
-	 * 
 	 */
     public function checkMethods($routeCreated, $routeRequested)
     {	
@@ -85,9 +74,7 @@ class Router implements RouterInterface
 
     /**
      * Verifica se o tamanho do array da url é igual ao da página.
-     * 
      * @return boolean
-     * 
      */
     public function checkQuantity($routeCreated, $routeRequested)
     {	
@@ -98,7 +85,10 @@ class Router implements RouterInterface
     	return false;
     }
 
-
+	/**
+     * Verifica os métodos das rotas
+     * @return boolean
+     */
     public function validMethod($route)
     {
     	if (is_array($route)) {
@@ -121,23 +111,12 @@ class Router implements RouterInterface
 
 	/**
 	 * Percorre o array que contem cada 'membro' da rota e os compara com a rota requisitada.
-	 * 
+	 * @return void
 	 */
     public function analyzeRoute($route)
     {	
     	for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
-
-			/**
-			 * Verifica se os valores das url da página e da url cadastrada são
-			 * iguais.
-			 * 
-			 */
 			if($route->getRequestUrl()[$i] == $this->url['request_url'][$i]){
-
-				/**
-				 * Verifica se está no fim do loop que percore as urls
-				 * 
-				 */
 				if($i == count($route->getRequestUrl())-1){	
 					$class = "App\\controllers\\{$route->getController()}";				
 					call_user_func([new $class(), $route->getMethod()], @$route->getParam());	
@@ -148,18 +127,10 @@ class Router implements RouterInterface
 				}
 			}else{
 
-				/**
-				 * Verifica se a posição do array cadastrado é para receber um parametro
-				 * 
-				 */
 				if(strstr($route->getRequestUrl()[$i], '{')){
 					$nameParameter = str_replace(["{", "}"], '', $route->getRequestUrl()[$i]);
 					$route->setParam($nameParameter, $this->url['request_url'][$i]);
 
-					/**
-					 * Verifica se está no fim do loop que percore as urls
-					 * 
-					 */
 					if($i == count($route->getRequestUrl())-1){
 						$class = "App\\controllers\\{$route->getController()}";				
 						call_user_func([new $class(), $route->getMethod()], @$route->getParam());
@@ -168,41 +139,22 @@ class Router implements RouterInterface
 							$this->debug();	
 						}							
 					}
-
-				/**
-				 * Execulta o break caso o valor dos arrays na posição x seja 
-				 * divergentes e não seja prepara para receber um parâmetro
-				 * 
-				 */
 				}else{
 
-					/**
-					 * Limpa os parametros adicionados na rota.
-					 * 
-					 */
 					$route->unsetParms();
-
-					/**
-					 * Para a verificação de toda a url.
-					 * 
-					 */
 					break;
 				}								 							
 			}
 		}
-
 	}
-	
+
 	/**
-	 * Cao sejá necessario o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
+	 * Caso seja necessário o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
 	 * método construtor da classe.
-	 * 
 	 * @return void
-	 * 
 	 */
     private function debug()
     {
-
     	echo "<pre>";
 
     	echo "<br><hr></br>";
@@ -218,16 +170,11 @@ class Router implements RouterInterface
 	}
 	
 	/**
-	 * O método __destruct é execultado para verificar se a url requisita está registrada nas 
-	 * rotas e assim realizar a execulção do método da classe solicitada.
-	 * 
+	 * O método __destruct é executado para verificar se a url requisita está registrada nas 
+	 * rotas e assim realizar a execução do método da classe solicitada.
 	 */
 	public function __destruct()
-	{
-		/**
-		 * Percorre todas as rotas cadastradas no arquivo routes.php
-		 * 
-		 */		
+	{	
 		foreach ($this->routes as &$route) {
 			if($this->checkMethods($route, $this->url) && $this->checkQuantity($route, $this->url)){	
 

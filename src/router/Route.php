@@ -4,12 +4,42 @@ namespace Router;
 class Route
 {
 
-	private $controller;
-	private $method;
-	private $request_url;
-	private $request_method;
+    /**
+     * Controller que a rota irá invocar
+     * @var string
+     */
+    private $controller;
+    
+    /**
+     * Método do controller que irá ser chamado
+     * @var string
+     */
+    private $method;
+    
+    /**
+     * Url cadastrada
+     * @var string[]
+     */
+    private $request_url;
+    
+    /**
+     * Método dessa rota
+     * @var string
+     */
+    private $request_method;
+    
+    /**
+     * Array que contem todos os parâmetros
+     * @var string[]
+     */
 	private $param;
 
+    /**
+     * @param $controller
+     * @param $method
+     * @param $request_url
+     * @param $request_method
+     */
 	public function __construct($controller, $method, $request_url, $request_method)
 	{
 
