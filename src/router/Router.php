@@ -56,7 +56,7 @@ class Router implements RouterInterface
 		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_GET);
 	}
 
-    /**
+	/**
 	 * Verifica se o método da rota é igual ao método de acesso a página.
 	 * @return boolean
 	 */
@@ -70,7 +70,6 @@ class Router implements RouterInterface
 
     	return false;
     }
-
 
     /**
      * Verifica se o tamanho do array da url é igual ao da página.
@@ -86,9 +85,9 @@ class Router implements RouterInterface
     }
 
 	/**
-     * Verifica os métodos das rotas
-     * @return boolean
-     */
+	 * Verifica os métodos das rotas
+	 * @return boolean
+	 */
     public function validMethod($route)
     {
     	if (is_array($route)) {
@@ -156,16 +155,12 @@ class Router implements RouterInterface
     private function debug()
     {
     	echo "<pre>";
-
     	echo "<br><hr></br>";
     	print_r($this->url);
-
     	echo "<br><hr></br>";
     	print_r($this->routes);	
-
     	echo "<br><hr></br>";
     	print_r($_SERVER);
-
     	echo "</pre>";
 	}
 	
