@@ -41,13 +41,13 @@ class Route
      * @param $request_method
      */
     public function __construct($controller, $method, $request_url, $request_method)
-	{
-		$this->controller     = $controller;
-		$this->method         = $method;
-		$this->request_url    = $request_url;
-		$this->request_method = $request_method;
-		$this->param          = null;
-	}
+    {
+	$this->controller     = $controller;
+	$this->method         = $method;
+	$this->request_url    = $request_url;
+	$this->request_method = $request_method;
+	$this->param          = null;
+    }
 
     public function getController()
     {
