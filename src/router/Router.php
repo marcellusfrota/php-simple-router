@@ -7,12 +7,26 @@ use Router\RouterInterface;
 class Router implements RouterInterface
 {
 
+	/**
+	 * Array of rotated objects.
+	 * @var array
+	 */
 	protected $routes;
+
+	/**
+	 * Requested route.
+	 * @var object
+	 */
 	protected $requestedRoute;
+
+	/**
+	 * Control application debug.
+	 * @var boolean
+	 */
 	protected $debug;
 
 	/**
-	 * Registra a url requisitada na página.
+	 * Register the requested url on the page.
 	 * @param $debugValue
 	 */
 	public function __construct($debug = false)
@@ -35,7 +49,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do método post.
+	 * Register a route that can be accessed through the post method.
 	 * @return void
 	 */
 	public function post($url, $args)
@@ -46,7 +60,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do método get.
+	 * Register a route that can be accessed through the get method.
 	 * @return void
 	 */
 	public function get($url, $args)
@@ -57,7 +71,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do método delete.
+	 * Register a route that can be accessed through the delete method.
 	 * @return void
 	 */
 	public function delete($url, $args)
@@ -68,7 +82,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Cadastra uma rota do que pode ser acessada atravez do método put.
+	 * Register a route that can be accessed through the put method.
 	 * @return void
 	 */
 	public function put($url, $args)
@@ -79,7 +93,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Verifica se o método da rota é igual ao método de acesso a página.
+	 * Verifies that the route method is the same as the page access method.
 	 * @return boolean
 	 */
 	public function checkMethods($routeCreated, $requestedRoute)
@@ -94,7 +108,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	* Verifica se o tamanho do array da url é igual ao da página.
+	* Checks if the size of the url array is the same as the page size.
 	* @return boolean
 	*/
 	public function checkQuantity($routeCreated, $requestedRoute)
@@ -107,7 +121,7 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Verifica os métodos das rotas
+	 * Check route methods.
 	 * @return boolean
 	 */
 	public function validMethod($route)
@@ -116,7 +130,7 @@ class Router implements RouterInterface
 			|| $route->getRequestMethod() == self::METHOD_POST
 			|| $route->getRequestMethod() == self::METHOD_DELETE
 			|| $route->getRequestMethod() == self::METHOD_PUT){
-				
+
 			return true;
 		}
 
@@ -125,7 +139,7 @@ class Router implements RouterInterface
 
 
 	/**
-	 * Percorre o array que contem cada 'membro' da rota e os compara com a rota requisitada.
+	 * It traverses the array that contains each 'member' of the route and compares them with the requested route.
 	 * @return void
 	 */
 	public function analyzeRoute($route)
@@ -164,8 +178,8 @@ class Router implements RouterInterface
 	}
 
 	/**
-	 * Caso seja necessário o debug das rotas basta deixar 'true' o atributo 'debug' dentro do
-	 * método construtor da classe.
+	 * If it is necessary to debug the routes, just leave the 'debug' attribute 'true' within the
+	 * class constructor method.
 	 * @return void
 	 */
 	private function debug()
@@ -181,8 +195,8 @@ class Router implements RouterInterface
 	}
 	
 	/**
-	 * O método __destruct é executado para verificar se a url requisita está registrada nas 
-	 * rotas e assim realizar a execução do método da classe solicitada.
+	 * The __destruct method is executed to check if the url requests are registered in the
+	 * routes and thus carry out the execution of the requested class method.
 	 */
 	public function __destruct()
 	{	

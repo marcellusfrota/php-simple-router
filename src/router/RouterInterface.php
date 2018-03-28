@@ -5,7 +5,7 @@ interface RouterInterface
 {
 
 	/**
-	 * Métodos suportados pela aplicação
+	 * Application-supported methods
 	 */
 	const METHOD_GET    = 'GET';
 	const METHOD_POST   = 'POST';

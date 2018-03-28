@@ -5,31 +5,31 @@ class Route
 {
 
     /**
-     * Controller que a rota irá invocar
+     * Controller that the route will invoke.
      * @var string
      */
     private $controller;
     
     /**
-     * Método do controller que irá ser chamado
+     * Controller method that will be called.
      * @var string
      */
     private $method;
     
     /**
-     * Url cadastrada
+     * Url registered.
      * @var string[]
      */
     private $request_url;
     
     /**
-     * Método dessa rota
+     * Route method.
      * @var string
      */
     private $request_method;
     
     /**
-     * Array que contem todos os parâmetros
+     * Array that contains all parameters.
      * @var string[]
      */
     private $param;
