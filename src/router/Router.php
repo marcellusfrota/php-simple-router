@@ -8,7 +8,7 @@ class Router implements RouterInterface
 {
 
 	protected $routes;
-	protected $url;
+	protected $requestedRoute;
 	protected $debug;
 
 	/**
@@ -18,17 +18,17 @@ class Router implements RouterInterface
 	public function __construct($debug = false)
 	{
 		$path = "/";
-		$this->url['request_method'] = self::METHOD_GET;
-
+		$this->requestedRoute = new Route();
+		
 		if(isset($_SERVER['PATH_INFO'])){
-			$path = $_SERVER['PATH_INFO'];		
+			$path = $_SERVER['PATH_INFO'];
 		}
 
 		if(isset($_SERVER['REQUEST_METHOD'])){
-			$this->url['request_method'] = $_SERVER['REQUEST_METHOD'];		
+			$this->requestedRoute->setRequestMethod($_SERVER['REQUEST_METHOD']);
 		}
 		
-		$this->url['request_url'] = explode("/", parse_url($path, PHP_URL_PATH));
+		$this->requestedRoute->setRequestUrl(explode("/", parse_url($path, PHP_URL_PATH)));
 
 		$this->routes = array();
 		$this->debug = $debug;
@@ -82,10 +82,10 @@ class Router implements RouterInterface
 	 * Verifica se o método da rota é igual ao método de acesso a página.
 	 * @return boolean
 	 */
-	public function checkMethods($routeCreated, $routeRequested)
+	public function checkMethods($routeCreated, $requestedRoute)
 	{	
-		if($this->validMethod($routeCreated) && $this->validMethod($routeRequested)){
-			if($routeCreated->getRequestMethod() == $routeRequested['request_method']){
+		if($this->validMethod($routeCreated) && $this->validMethod($requestedRoute)){
+			if($routeCreated->getRequestMethod() == $requestedRoute->getRequestMethod()){
 				return true;
 			}
 		}
@@ -97,9 +97,9 @@ class Router implements RouterInterface
 	* Verifica se o tamanho do array da url é igual ao da página.
 	* @return boolean
 	*/
-	public function checkQuantity($routeCreated, $routeRequested)
+	public function checkQuantity($routeCreated, $requestedRoute)
 	{	
-		if(count($routeCreated->getRequestUrl()) == count($routeRequested['request_url'])){
+		if(count($routeCreated->getRequestUrl()) == count($requestedRoute->getRequestUrl())){
 			return true;
 		}
 
@@ -111,18 +111,12 @@ class Router implements RouterInterface
 	 * @return boolean
 	 */
 	public function validMethod($route)
-	{
-		if (is_array($route)) {
-			if($route['request_method'] == self::METHOD_GET 
-				|| $route['request_method'] == self::METHOD_POST){
-			return true;
-		}
-
-			return false;
-		}
-
+	{		
 		if($route->getRequestMethod() == self::METHOD_GET 
-			|| $route->getRequestMethod() == self::METHOD_POST){
+			|| $route->getRequestMethod() == self::METHOD_POST
+			|| $route->getRequestMethod() == self::METHOD_DELETE
+			|| $route->getRequestMethod() == self::METHOD_PUT){
+				
 			return true;
 		}
 
@@ -137,7 +131,7 @@ class Router implements RouterInterface
 	public function analyzeRoute($route)
 	{	
 		for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
-			if($route->getRequestUrl()[$i] == $this->url['request_url'][$i]){
+			if($route->getRequestUrl()[$i] == $this->requestedRoute->getRequestUrl()[$i]){
 				if($i == count($route->getRequestUrl())-1){	
 					$class = "App\\controllers\\{$route->getController()}";				
 					call_user_func([new $class(), $route->getMethod()], @$route->getParam());	
@@ -150,7 +144,7 @@ class Router implements RouterInterface
 
 				if(strstr($route->getRequestUrl()[$i], '{')){
 					$nameParameter = str_replace(["{", "}"], '', $route->getRequestUrl()[$i]);
-					$route->setParam($nameParameter, $this->url['request_url'][$i]);
+					$route->setParam($nameParameter, $this->requestedRoute->getRequestUrl()[$i]);
 
 					if($i == count($route->getRequestUrl())-1){
 						$class = "App\\controllers\\{$route->getController()}";				
@@ -178,7 +172,7 @@ class Router implements RouterInterface
 	{
 		echo "<pre>";
 		echo "<br><hr></br>";
-		print_r($this->url);
+		print_r($this->requestedRoute);
 		echo "<br><hr></br>";
 		print_r($this->routes);	
 		echo "<br><hr></br>";
@@ -193,7 +187,7 @@ class Router implements RouterInterface
 	public function __destruct()
 	{	
 		foreach ($this->routes as &$route) {
-			if($this->checkMethods($route, $this->url) && $this->checkQuantity($route, $this->url)){	
+			if($this->checkMethods($route, $this->requestedRoute) && $this->checkQuantity($route, $this->requestedRoute)){	
 
 				$this->analyzeRoute($route);					
 			}							
