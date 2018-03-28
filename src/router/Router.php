@@ -54,9 +54,7 @@ class Router implements RouterInterface
 	 */
 	public function post($url, $args)
 	{
-		$args = explode("@", $args);
-		$uri = explode("/", $url);
-		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_POST);
+		$this->registerRoute($url, $args, self::METHOD_POST);
 	}
 
 	/**
@@ -65,9 +63,7 @@ class Router implements RouterInterface
 	 */
 	public function get($url, $args)
 	{
-		$args = explode("@", $args);
-		$uri = explode("/", $url);
-		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_GET);
+		$this->registerRoute($url, $args, self::METHOD_GET);
 	}
 
 	/**
@@ -76,9 +72,7 @@ class Router implements RouterInterface
 	 */
 	public function delete($url, $args)
 	{
-		$args = explode("@", $args);
-		$uri = explode("/", $url);
-		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_DELETE);
+		$this->registerRoute($url, $args, self::METHOD_DELETE);
 	}
 
 	/**
@@ -87,9 +81,18 @@ class Router implements RouterInterface
 	 */
 	public function put($url, $args)
 	{
-		$args = explode("@", $args);
+		$this->registerRoute($url, $args, self::METHOD_PUT);
+	}
+
+	/**
+	 * Register a route.
+	 * @return void
+	 */
+	public function registerRoute($url, $args, $method)
+	{
 		$uri = explode("/", $url);
-		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_PUT);
+		$args = explode("@", $args);
+		$this->routes[$url] = new Route($args[0], $args[1], $uri, $method);
 	}
 
 	/**
