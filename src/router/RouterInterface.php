@@ -15,5 +15,7 @@ interface RouterInterface
 
 	public function post($url, $args);
 	public function get($url, $args);
+	public function delete($url, $args);
+	public function put($url, $args);
 
 }

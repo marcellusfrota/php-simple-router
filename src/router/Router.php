@@ -15,7 +15,7 @@ class Router implements RouterInterface
 	 * Registra a url requisitada na página.
 	 * @param $debugValue
 	 */
-	public function __construct($debugValue = false)
+	public function __construct($debug = false)
 	{
 		$path = "/";
 		$this->url['request_method'] = self::METHOD_GET;
@@ -31,7 +31,7 @@ class Router implements RouterInterface
 		$this->url['request_url'] = explode("/", parse_url($path, PHP_URL_PATH));
 
 		$this->routes = array();
-		$this->debug = $debugValue;
+		$this->debug = $debug;
 	}
 
 	/**
@@ -54,6 +54,28 @@ class Router implements RouterInterface
 		$args = explode("@", $args);
 		$uri = explode("/", $url);
 		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_GET);
+	}
+
+	/**
+	 * Cadastra uma rota do que pode ser acessada atravez do método delete.
+	 * @return void
+	 */
+	public function delete($url, $args)
+	{
+		$args = explode("@", $args);
+		$uri = explode("/", $url);
+		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_DELETE);
+	}
+
+	/**
+	 * Cadastra uma rota do que pode ser acessada atravez do método put.
+	 * @return void
+	 */
+	public function put($url, $args)
+	{
+		$args = explode("@", $args);
+		$uri = explode("/", $url);
+		$this->routes[$url] = new Route($args[0], $args[1], $uri, self::METHOD_PUT);
 	}
 
 	/**
