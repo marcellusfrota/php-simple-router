@@ -11,19 +11,19 @@ class Router implements RouterInterface
 	 * Array of rotated objects.
 	 * @var array
 	 */
-	protected $routes;
+	private $routes;
 
 	/**
 	 * Requested route.
 	 * @var object
 	 */
-	protected $requestedRoute;
+	private $requestedRoute;
 
 	/**
 	 * Control application debug.
 	 * @var boolean
 	 */
-	protected $debug;
+	private $debug;
 
 	/**
 	 * Register the requested url on the page.
@@ -88,7 +88,7 @@ class Router implements RouterInterface
 	 * Register a route.
 	 * @return void
 	 */
-	public function registerRoute($url, $args, $method)
+	private function registerRoute($url, $args, $method)
 	{
 		$uri = explode("/", $url);
 		$args = explode("@", $args);
@@ -99,10 +99,10 @@ class Router implements RouterInterface
 	 * Verifies that the route method is the same as the page access method.
 	 * @return boolean
 	 */
-	public function checkMethods($routeCreated, $requestedRoute)
+	private function checkMethods($routeCreated)
 	{	
-		if($this->validMethod($routeCreated) && $this->validMethod($requestedRoute)){
-			if($routeCreated->getRequestMethod() == $requestedRoute->getRequestMethod()){
+		if($this->validMethod($routeCreated) && $this->validMethod($this->requestedRoute)){
+			if($routeCreated->getRequestMethod() == $this->requestedRoute->getRequestMethod()){
 				return true;
 			}
 		}
@@ -114,9 +114,9 @@ class Router implements RouterInterface
 	* Checks if the size of the url array is the same as the page size.
 	* @return boolean
 	*/
-	public function checkQuantity($routeCreated, $requestedRoute)
+	private function checkQuantity($routeCreated)
 	{	
-		if(count($routeCreated->getRequestUrl()) == count($requestedRoute->getRequestUrl())){
+		if(count($routeCreated->getRequestUrl()) == count($this->requestedRoute->getRequestUrl())){
 			return true;
 		}
 
@@ -127,7 +127,7 @@ class Router implements RouterInterface
 	 * Check route methods.
 	 * @return boolean
 	 */
-	public function validMethod($route)
+	private function validMethod($route)
 	{		
 		if($route->getRequestMethod() == self::METHOD_GET 
 			|| $route->getRequestMethod() == self::METHOD_POST
@@ -140,12 +140,11 @@ class Router implements RouterInterface
 		return false;
 	}
 
-
 	/**
 	 * It traverses the array that contains each 'member' of the route and compares them with the requested route.
 	 * @return void
 	 */
-	public function analyzeRoute($route)
+	private function analyzeRoute($route)
 	{	
 		for($i = 0;$i < count($route->getRequestUrl()); $i++){ 
 			if($route->getRequestUrl()[$i] == $this->requestedRoute->getRequestUrl()[$i]){
@@ -204,7 +203,7 @@ class Router implements RouterInterface
 	public function __destruct()
 	{	
 		foreach ($this->routes as &$route) {
-			if($this->checkMethods($route, $this->requestedRoute) && $this->checkQuantity($route, $this->requestedRoute)){	
+			if($this->checkMethods($route) && $this->checkQuantity($route)){	
 
 				$this->analyzeRoute($route);					
 			}							
