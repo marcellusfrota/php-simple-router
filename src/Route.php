@@ -7,39 +7,43 @@ class Route
     private $controller;
     private $view;
 
-    public function __construct($uri, $controller, $view)
+    public function __construct(
+        String $uri        = null, 
+        String $controller = null, 
+        String $view       = null
+    )
     {
         $this->uri        = $uri;
         $this->controller = $controller;
         $this->view       = $view;
     }
 
-    public function getUri()
+    public function getUri(): String
     {
         return $this->uri;
     }
 
-    public function getController()
+    public function getController(): String
     {
         return $this->controller;
     }
 
-    public function getView()
+    public function getView(): String
     {
         return $this->view;
     }
 
-    public function setUri($uri)
+    public function setUri(String $uri): void
     {
         $this->uri = $uri;
     }
 
-    public function setController($controller)
+    public function setController(String $controller): void
     {
         $this->controller = $controller;
     }
 
-    public function setView($view)
+    public function setView(String $view): void
     {
         $this->view = $view;
     }
