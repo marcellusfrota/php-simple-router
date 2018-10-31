@@ -1,6 +1,6 @@
 {
-    "name": "php-project-router/composer-php",
-    "description": "php-project-router, sample pack",
+    "name": "php-simple-router",
+    "description": "php-simple-router, sample pack",
     "authors": [
         {
             "name": "hudson",
@@ -13,10 +13,8 @@
     },
     "autoload":{
         "psr-4": {
-            "Router\\": "src/router/",
-            "App\\": "src/mvc/"
+            "App\\": "src/"
         }
-
     },
     "require-dev": {
         "phpunit/phpunit": "^6"
