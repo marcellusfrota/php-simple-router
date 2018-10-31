@@ -1,4 +1,4 @@
-# php-project-router 
+# php-simple-router
 ##  :warning: :rotating_light:discontinued :rotating_light: :warning:
 
 **Version 1.1.1**
