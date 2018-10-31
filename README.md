@@ -1,6 +1,7 @@
-# php-simple-router
-##  :warning: :rotating_light: discontinued :rotating_light: :warning:
+# php-simple-router :construction:
 
-**Version 1.1.1**
+**Version 1.2.0** | **Under construction** :construction:
 
 A system for implementing routes in your project.
+
+Feel free to contribute.
